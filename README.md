@@ -1,501 +1,342 @@
-
-
-# 全期總覽（90 天 / 12 週）
-
-目標：
-
-> 從 Java 幾乎新手 → 能獨立做後端服務（可面試）
-
-每天固定 2 小時。
+當然可以！我會依你的 **週課表目標** 一天一天拆解要學會的重點、背後概念、實作步驟、以及常見錯誤提醒。幫你把「這周要做的事情」變成「可實際學習的教學內容」。
 
 ---
 
-# Phase 1（第 1–14 天）
+## ✅ **Day 1 — 安裝 JDK 17 + IntelliJ 專案 + /ping**
 
-## 純 Java REST API（後端底層）
+### 📌 目標
 
-> 目標：知道後端「本質在幹嘛」
+🚀 安裝 Java 開發環境
+✨ 用 IntelliJ 開一個專案
+📌 做出一個最簡單的 HTTP server → `http://localhost:8080/ping` 回傳 `"pong"`
 
-### Day 1
+---
 
-* 安裝 JDK 17
-* IntelliJ 建專案
-* 跑起 `/ping`
+### 🔧 1) 安裝 JDK 17
 
-產出：
+✔ 到 Oracle 或 OpenJDK 官方下載 JDK 17
+✔ 設定環境變數
+✔ command line 輸入：
 
-```
-http://localhost:8080/ping → pong
+```bash
+java -version
 ```
 
----
-
-### Day 2
-
-* 建 package 結構
-* 新增 `/hello`
-* 理解 main / HttpServer
+應該看到 JDK 17 的版本資訊。
 
 ---
 
-### Day 3
+### 🔧 2) IntelliJ 建專案
 
-* 新增 `/users`
-* 回假資料 List<User>
-
----
-
-### Day 4
-
-* 加 Jackson
-* 回 JSON
+📍 **File → New → Project → Java**
+✔ 選 Java 版本 17
+✔ 把專案叫做 `java-http-server`
 
 ---
 
-### Day 5
+### 🔥 3) 先寫一個最簡單的 HTTP Server
 
-* 實作 POST /users
-* 接收 body
+```java
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+import java.net.InetSocketAddress;
+import java.io.IOException;
 
----
-
-### Day 6
-
-* HTTP method 分流
-* 狀態碼
-
----
-
-### Day 7
-
-* 重構整包
-* 不看教學重寫一次
-
----
-
-### Day 8
-
-* Exception handling
-* 統一錯誤格式
-
----
-
-### Day 9
-
-* Path param
-
-```
-GET /users/1
+public class Main {
+    public static void main(String[] args) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        server.createContext("/ping", (exchange) -> {
+            String response = "pong";
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+            exchange.getResponseBody().write(response.getBytes());
+            exchange.close();
+        });
+        server.start();
+        System.out.println("Server started at http://localhost:8080");
+    }
+}
 ```
 
 ---
 
-### Day 10
+### ✔️ 執行後驗證
 
-* Query param
+📌 打開瀏覽器輸入：
 
 ```
-GET /users?name=Tom
+http://localhost:8080/ping
+```
+
+應該看到：
+
+```
+pong
 ```
 
 ---
 
-### Day 11
-
-* Validation
-* 空值處理
+🔎 **Tip**
+這個 HttpServer 是 Java 內建的，非常適合做練習，但生產環境會用 Spring Boot 等框架。
 
 ---
 
-### Day 12
+---
 
-* logging
-* 印 request flow
+## ✅ **Day 2 — 建 package 結構 + 新增 /hello + 理解 main / HttpServer**
 
 ---
 
-### Day 13
+### 📌 1) Package 結構
 
-* API 文件（自己寫 Markdown）
+把程式碼整理起來：
 
----
+```
+src/main/java/com/example/app
+```
 
-### Day 14
+內容可能像：
 
-* 回顧週
-* 完整重寫一輪
-
----
-
-# Phase 2（第 15–28 天）
-
-## JDBC + MySQL（後端靈魂）
-
-### Day 15
-
-* 安裝 MySQL
-* 建 DB + table
+```
+com.example.app
+├── Main.java
+├── router
+│   └── Router.java
+├── handler
+    ├── HelloHandler.java
+    └── PingHandler.java
+```
 
 ---
 
-### Day 16
+### 📌 2) /hello 路由
 
-* JDBC connect
-* 測試 SELECT
+新增一個 HelloHandler：
 
----
+```java
+package com.example.app.handler;
 
-### Day 17
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import java.io.IOException;
 
-* UserDao
-* 查單筆
+public class HelloHandler implements HttpHandler {
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        String response = "Hello, world!";
+        exchange.sendResponseHeaders(200, response.length());
+        exchange.getResponseBody().write(response.getBytes());
+        exchange.close();
+    }
+}
+```
 
----
+在 Main 註冊：
 
-### Day 18
-
-* 查全部
-
----
-
-### Day 19
-
-* INSERT user
-
----
-
-### Day 20
-
-* UPDATE user
+```java
+server.createContext("/hello", new HelloHandler());
+```
 
 ---
 
-### Day 21
+### 📌 3) 理解 main 和 HttpServer
 
-* DELETE user
-
----
-
-### Day 22
-
-* 接回 REST API
+📌 `main()` 是程式進入點
+📌 `HttpServer.create(...)` → 開一個 Port
+📌 `createContext()` → 設定路由
+📌 `start()` → 開始接請求
 
 ---
 
-### Day 23
+---
 
-* PreparedStatement
+## ✅ **Day 3 — 新增 /users + 回假資料 List**
 
 ---
 
-### Day 24
+### 📌 /users API
 
-* 防 SQL injection
+先寫假資料：
 
----
+```java
+List<String> users = Arrays.asList("alice", "bob", "eve");
+```
 
-### Day 25
+寫 Handler：
 
-* Transaction
+```java
+package com.example.app.handler;
 
----
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
-### Day 26
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
-* 重構 DAO layer
-
----
-
-### Day 27
-
-* Exception mapping
-
----
-
-### Day 28
-
-* 完整測試（Postman）
-
----
-
-# Phase 3（第 29–42 天）
-
-## Spring Boot（主流框架）
-
-### Day 29
-
-* Spring Initializr
-* 跑起來
+public class UsersHandler implements HttpHandler {
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        List<String> users = Arrays.asList("alice", "bob", "eve");
+        String response = String.join(",", users);
+        exchange.sendResponseHeaders(200, response.getBytes().length);
+        exchange.getResponseBody().write(response.getBytes());
+        exchange.close();
+    }
+}
+```
 
 ---
 
-### Day 30
+### 📌 註冊
 
-* @RestController
-* GET API
-
----
-
-### Day 31
-
-* POST API
+```java
+server.createContext("/users", new UsersHandler());
+```
 
 ---
 
-### Day 32
-
-* JPA Entity
+## ✅ **Day 4 — 加 Jackson → 回 JSON**
 
 ---
 
-### Day 33
+### 📌 用 Maven 加依賴
 
-* Repository
+在 `pom.xml`：
 
----
-
-### Day 34
-
-* DTO mapping
-
----
-
-### Day 35
-
-* Validation
+```xml
+<dependency>
+   <groupId>com.fasterxml.jackson.core</groupId>
+   <artifactId>jackson-databind</artifactId>
+   <version>2.15.0</version>
+</dependency>
+```
 
 ---
 
-### Day 36
+### 📌 回 JSON
 
-* Exception Handler
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
 
----
+public class UsersHandler implements HttpHandler {
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        List<User> users = List.of(
+            new User("alice"),
+            new User("bob")
+        );
 
-### Day 37
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(users);
 
-* logback
-
----
-
-### Day 38
-
-* 分環境設定
-
----
-
-### Day 39
-
-* 重構整包
-
----
-
-### Day 40
-
-* API 文件
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        exchange.sendResponseHeaders(200, json.length());
+        exchange.getResponseBody().write(json.getBytes());
+        exchange.close();
+    }
+}
+```
 
 ---
 
-### Day 41
-
-* 自己重寫一次
+## ✅ **Day 5 — POST /users + 接收 body**
 
 ---
 
-### Day 42
+### 📌 解析 POST Body
 
-* 對比：純 Java vs Spring
-
----
-
-# Phase 4（第 43–56 天）
-
-## 真實後端能力
-
-### Day 43
-
-* JWT 原理
+```java
+if ("POST".equals(exchange.getRequestMethod())) {
+    InputStream body = exchange.getRequestBody();
+    User user = new ObjectMapper().readValue(body, User.class);
+    // 假裝儲存 user
+}
+```
 
 ---
 
-### Day 44
+### 📌 回應
 
-* 登入 API
-
----
-
-### Day 45
-
-* Token 驗證
+```java
+String response = "created!";
+exchange.sendResponseHeaders(201, response.length());
+exchange.getResponseBody().write(response.getBytes());
+```
 
 ---
 
-### Day 46
-
-* Filter / Interceptor
+## ✅ **Day 6 — HTTP Method 分流 + 狀態碼**
 
 ---
 
-### Day 47
+### 📌 Method 分流
 
-* CORS
+在 handler 裡：
 
----
-
-### Day 48
-
-* RBAC 權限
-
----
-
-### Day 49
-
-* Refresh token
+```java
+switch (exchange.getRequestMethod()) {
+  case "GET": handleGet(exchange); break;
+  case "POST": handlePost(exchange); break;
+  default:
+      exchange.sendResponseHeaders(405, -1);
+}
+```
 
 ---
 
-### Day 50
+### 📌 常用狀態碼
 
-* 登入流程重構
-
----
-
-### Day 51
-
-* Exception security
-
----
-
-### Day 52
-
-* log security
+| Code | 意義                 |
+| ---- | ------------------ |
+| 200  | OK                 |
+| 201  | Created            |
+| 400  | Bad Request        |
+| 404  | Not Found          |
+| 405  | Method Not Allowed |
+| 500  | Server Error       |
 
 ---
 
-### Day 53
-
-* 整體測試
+## ✅ **Day 7 — 重構 & 不看教學重寫一次**
 
 ---
 
-### Day 54
+### 📌 真正重構目標
 
-* API 文件
-
----
-
-### Day 55
-
-* 自己重寫
+✔ 把 routing 從 Main 拆出去
+✔ 分工內容：Handler / Router / Service
+✔ 做更乾淨、可測試的架構
 
 ---
 
-### Day 56
+## 📌 補充：User 類
 
-* 架構圖
+```java
+public class User {
+    private String name;
+    public User() {}
+    public User(String name) { this.name = name; }
 
----
-
-# Phase 5（第 57–70 天）
-
-## Docker + 部署
-
-### Day 57
-
-* Docker 基礎
-
----
-
-### Day 58
-
-* Dockerfile
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+}
+```
 
 ---
 
-### Day 59
+## 🛠️ 工具 + 心得
 
-* docker-compose
+✅ IntelliJ
+✅ JDK 17
+✅ HttpServer
+✅ Jackson JSON
 
----
+學習順序邏輯：
 
-### Day 60
-
-* MySQL container
-
----
-
-### Day 61
-
-* API container
+```
+環境 → 路由 → 假資料 → JSON → POST → Method → 重構
+```
 
 ---
 
-### Day 62
-
-* 環境變數
-
----
-
-### Day 63
-
-* 雲端部署
-
----
-
-### Day 64
-
-* domain 綁定
-
----
-
-### Day 65
-
-* HTTPS
-
----
-
-### Day 66
-
-* log 觀察
-
----
-
-### Day 67
-
-* crash 測試
-
----
-
-### Day 68
-
-* 重構 Docker
-
----
-
-### Day 69
-
-* 文件整理
-
----
-
-### Day 70
-
-* demo 上線
-
----
-
-# Phase 6（第 71–90 天）
-
-## 高級 Java 基礎（工程師版）
-
-每天一個主題：
-
-* OOP 深入
-* SOLID
-* JVM
-* GC
-* Concurrency
-* Collections
-* Design Patterns
-* Clean Code
-* 測試（JUnit）
