@@ -1,0 +1,117 @@
+在 **Java** 裡，**`interface` 和 `abstract class`（抽象類）** 都屬於 **抽象設計**，但用途不同。
+
+我用最簡單方式幫你比較。
+
+---
+
+# 1️⃣ interface（介面）
+
+**interface 是「只定義功能」的規格。**
+
+意思是：
+只說 **要做什麼**，不寫 **怎麼做**。
+
+### 範例
+
+```java
+interface Animal {
+    void sound();
+}
+```
+
+實作：
+
+```java
+class Dog implements Animal {
+    public void sound() {
+        System.out.println("Dog barks");
+    }
+}
+```
+
+特點：
+
+* 不能建立物件
+* 方法通常沒有實作
+* 一個 class **可以實作多個 interface**
+
+例如：
+
+```java
+class RobotDog implements Animal, Machine
+```
+
+---
+
+# 2️⃣ abstract class（抽象類）
+
+**抽象類是「部分完成的類別」**。
+
+可以：
+
+* 有抽象方法
+* 也可以有已經寫好的方法
+
+### 範例
+
+```java
+abstract class Animal {
+
+    abstract void sound();
+
+    void sleep() {
+        System.out.println("sleep");
+    }
+}
+```
+
+子類：
+
+```java
+class Dog extends Animal {
+
+    void sound() {
+        System.out.println("Dog barks");
+    }
+}
+```
+
+---
+
+# 3️⃣ 主要差別
+
+| 比較   | interface   | abstract class   |
+| ---- | ----------- | ---------------- |
+| 關鍵字  | `interface` | `abstract class` |
+| 方法   | 多數沒實作       | 可以有實作            |
+| 繼承數量 | 可多個         | 只能一個             |
+| 目的   | 定義功能        | 建立基礎類            |
+
+---
+
+# 4️⃣ 最簡單理解
+
+📌 **interface = 能力 / 功能**
+
+```text
+Flyable
+Swimmable
+Runnable
+```
+
+📌 **abstract class = 類別的基礎模板**
+
+```text
+Animal
+Vehicle
+Shape
+```
+
+---
+
+✅ **簡單一句話**
+
+* **interface** → 定義「能做什麼」
+* **abstract class** → 提供「部分實作」
+
+---
