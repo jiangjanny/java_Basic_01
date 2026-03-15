@@ -1,0 +1,151 @@
+我用一個 **最直觀的圖 + 範例**幫你理解 **普通 class、abstract class、interface** 在 **Java** 裡的差別。
+
+---
+
+# 1️⃣ class（普通類）
+
+**可以直接建立物件。**
+
+```java
+class Dog {
+
+    void bark() {
+        System.out.println("汪汪");
+    }
+}
+```
+
+使用：
+
+```java
+Dog d = new Dog();
+d.bark();
+```
+
+✔ 最常用
+✔ 有完整實作
+✔ 可以 `new`
+
+---
+
+# 2️⃣ abstract class（抽象類）
+
+**不能建立物件，只能被繼承。**
+
+用途：
+做「基礎模板」。
+
+```java
+abstract class Animal {
+
+    abstract void sound();
+
+    void sleep() {
+        System.out.println("sleep");
+    }
+}
+```
+
+子類：
+
+```java
+class Dog extends Animal {
+
+    void sound() {
+        System.out.println("汪汪");
+    }
+}
+```
+
+✔ 可以有 **普通方法**
+✔ 可以有 **抽象方法**
+❌ 不能 `new`
+
+---
+
+# 3️⃣ interface（介面）
+
+**定義能力 / 功能**
+
+```java
+interface Flyable {
+    void fly();
+}
+```
+
+實作：
+
+```java
+class Bird implements Flyable {
+
+    public void fly() {
+        System.out.println("flying");
+    }
+}
+```
+
+✔ 定義功能
+✔ 可以 **多實作**
+
+```java
+class Robot implements Flyable, Runnable
+```
+
+---
+
+# 4️⃣ 最清楚的關係圖
+
+```
+class
+  │
+  ├── abstract class
+  │        │
+  │        └── 子類繼承
+  │
+  └── interface
+           │
+           └── class implements
+```
+
+另一個更直觀的例子：
+
+```
+        Animal (abstract)
+        /      \
+     Dog       Cat
+        ↑
+    implements
+      Flyable (interface)
+```
+
+---
+
+# 5️⃣ 真實開發常見比例
+
+在 Java 專案裡通常是：
+
+```
+class        ⭐⭐⭐⭐⭐
+interface    ⭐⭐⭐⭐
+abstract     ⭐⭐⭐
+```
+
+很多框架像
+
+* **Spring Framework**
+* **Hibernate**
+
+都會大量使用 **interface + abstract class**。
+
+---
+
+✅ **一句話記憶**
+
+```
+class        = 完整類別
+abstract     = 半成品類別
+interface    = 功能規格
+```
+
+---
+
