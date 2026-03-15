@@ -138,7 +138,17 @@ My name is Amy, I am 18 years old.
 
 ---
 
+
+
 # 📌 初學者記住這個結構就夠了
+## Class Constructor
+
+Java 中的Constructor 是一種用於初始化對象的特殊方法，創建類的對象調用構造函數，他可用於對象屬性的初始值，
+**規則:**
+1. Constructor 必須與Class 名相同
+2. Constructor 用於製作新的物件
+3. Constructor 沒有任何返回類型 (無論是 void、int、double、boolean 都不對)
+4. 所有Class 默認都有 Constructor : 如果我們不寫Constructor，Java 會為我們創建一個。但是，您無法為object 的屬性設置初始值
 
 一個 **Java Class** 通常長這樣：
 
